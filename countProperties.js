@@ -7,10 +7,10 @@ export default function countProperties(rules, test) {
 	let ret = {};
 
 	walkDeclarations(rules, declaration => {
-		if (matches(rule, test?.rules) && matches(declaration.property, test?.properties)) {
+		if (matches(declaration.property, test?.properties)) {
 			ret[declaration.property] = (ret[declaration.property] || 0) + 1;
 		}
-	});
+	}, {rules: test?.rules});
 
 	return sortObject(ret);
 }
