@@ -5,20 +5,22 @@ export default function matches(value, test) {
 	if (!test) {
 		return true;
 	}
-	
+
 	if (Array.isArray(test)) {
 		return test.some(t => matches(value, t));
 	}
 
-	if (typeof value === "string") {
+	let type = typeof value;
+
+	if (type === "string") {
 		return value === test;
+	}
+	else if (type === "function") {
+		return test(value);
 	}
 	else if (test instanceof RegExp) {
 		return test.test(value);
 	}
-	else if (typeof test === "function") {
-		return test(value);
-	}
-
+	
 	return false;
 }

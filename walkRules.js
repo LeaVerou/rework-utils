@@ -1,11 +1,13 @@
 // Recursively walk all "normal" rules, i.e. rules with selectors
-export default function walkRules(rules, callback, test) {
+import matches from "./matches.js";
+
+export default function walkRules(rules, callback, ruleTest) {
 	if (!rules) {
 		return;
 	}
 
 	for (let rule of rules) {
-		if (!test || test(rule)) {
+		if (matches(rule, ruleTest)) {
 			callback(rule);
 		}
 

@@ -3,18 +3,13 @@
 import walkDeclarations from "./walkDeclarations.js";
 import matches from "./matches.js";
 
-/**
- * @param rules {Object} Rework AST rules (ast.stylesheet.rules for an entire stylesheet)
- * @param propTest {String|Array|RegExp|Function} Property test (could be empty)
- * @param valueTest {String|Array|RegExp|Function} Value test (could be empty)
- */
-export default function countDeclarations(rules, propTest, valueTest) {
+export default function countDeclarations(rules, test) {
 	let ret = 0;
 
 	walkDeclarations(rules, declaration => {
 		let {property, value} = declaration;
 
-		if (matches(property, propTest) && matches(value, valueTest)) {
+		if (matches(property, test?.properties) && matches(value, test?.values)) {
 			ret++;
 		}
 	});
