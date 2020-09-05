@@ -9,10 +9,10 @@ export default function walkRules(rules, callback, ruleTest) {
 	for (let rule of rules) {
 		if (matches(rule, ruleTest)) {
 			callback(rule);
-		}
 
-		if (rule.rules) {
-			walkRules(rule.rules, callback);
+			if (rule.rules) {
+				walkRules(rule.rules, callback, ruleTest);
+			}
 		}
 	}
 }

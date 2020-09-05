@@ -1,4 +1,6 @@
 // Rework utility to recursively walk all declarations
+import matches from "./matches.js";
+
 export default function walkDeclarations(rules, callback, test) {
 	if (!rules) {
 		return;
@@ -18,7 +20,7 @@ export default function walkDeclarations(rules, callback, test) {
 
 		// Walk declarations of nested rules (e.g. @media, @supports have nested rules)
 		if (rule.rules) {
-			walkDeclarations(rule.rules, callback);
+			walkDeclarations(rule.rules, callback, test);
 		}
 	}
 }

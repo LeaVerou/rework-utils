@@ -10,7 +10,7 @@ export default function matches(value, test) {
 		return test.some(t => matches(value, t));
 	}
 
-	let type = typeof value;
+	let type = typeof test;
 
 	if (type === "string") {
 		return value === test;
@@ -21,6 +21,6 @@ export default function matches(value, test) {
 	else if (test instanceof RegExp) {
 		return test.test(value);
 	}
-	
+
 	return false;
 }
