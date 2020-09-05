@@ -14,7 +14,7 @@ export default function countDeclarations(rules, propTest, valueTest) {
 	walkDeclarations(rules, declaration => {
 		let {property, value} = declaration;
 
-		if (matches(property, prop) && matches(value, test)) {
+		if (matches(property, propTest) && matches(value, valueTest)) {
 			ret++;
 		}
 	});
