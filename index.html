@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Rework Utils</title>
+<style>
+body {
+	font: 100%/1.5 Helvetica Neue, sans-serif;
+}
+
+input, textarea {
+	font: inherit;
+}
+
+#cssForm label {
+	display: block;
+}
+
+#cssForm input,
+#cssForm textarea {
+	width: 100%;
+	box-sizing: border-box;
+	display: block;
+}
+
+#cssForm textarea,
+pre {
+	font-family: Consolas, Monaco, monospace;
+}
+
+input:invalid,
+textarea:invalid {
+	color: #c00;
+}
+
+textarea {
+	min-height: calc(var(--lines, 1) * 1.5em);
+}
+</style>
+</head>
+<body>
+<h1>Rework Utils</h1>
+<p>To try out, enter CSS below or a URL to a stylesheet, then play around in the console with the <code>AST</code> or <code>ast</code> variables (which is also displayed below).
+All util functions are imported into the global scope so you can play around with them too.</p>
+<form id="cssForm" action="">
+	<fieldset>
+		<legend>Stylesheet</legend>
+
+		<label>
+			URL to stylesheet:
+			<input id="cssURL" type="url" value="https://lea.verou.me/wp-content/themes/lv2020/style.css" />
+		</label>
+		<label>
+			CSS code:
+			<textarea id="cssCode"></textarea>
+		</label>
+	</fieldset>
+</form>
+
+<pre id="astDisplay"></pre>
+
+<script src="https://cdn.httparchive.org/lib/parse-css.js"></script>
+<script type="module">
+import * as ReworkUtils from "./src/all.js";
+
+for (let name in ReworkUtils) {
+	window[name] = ReworkUtils[name];
+}
+
+(async () => {
+
+window.AST = undefined;
+
+async function update() {
+	if (cssCode.value) {
+		try {
+			AST = parse(cssCode.value);
+			cssCode.setCustomValidity("");
+		}
+		catch (e) {
+			cssCode.setCustomValidity(e.message);
+		}
+	}
+	else if (cssURL.value) {
+		let response = await fetch('https://cors-anywhere.herokuapp.com/' + cssURL.value);
+		let css = await response.text();
+		try {
+			AST = parse(css);
+		}
+		catch (e) {
+			console.error(e);
+		}
+	}
+
+	window.ast = AST;
+
+	astDisplay.textContent = JSON.stringify(AST, null, "\t");
+}
+
+update();
+cssCode.oninput = cssForm.onsubmit = cssURL.onchange = update;
+
+cssCode.addEventListener("input", evt => {
+	let lines = cssCode.value.split("\n").length || 0;
+	cssCode.style.setProperty("--lines", lines);
+});
+
+})();
+</script>
+</body>
+</html>
