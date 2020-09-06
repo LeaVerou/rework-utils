@@ -6,6 +6,11 @@ export default function walkRules(rules, callback, ruleTest) {
 		return;
 	}
 
+	if (!Array.isArray(rules)) {
+		// AST passed
+		rules = rules.stylesheet.rules;
+	}
+
 	for (let rule of rules) {
 		if (matches(rule, ruleTest)) {
 			callback(rule);
