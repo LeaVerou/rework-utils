@@ -7,7 +7,7 @@ export default function countProperties(rules, test) {
 	let ret = {};
 
 	walkDeclarations(rules, declaration => {
-		if (matches(declaration.property, test?.properties)) {
+		if (matches(declaration.property, test?.properties) && matches(declaration.value, test?.values)) {
 			ret[declaration.property] = (ret[declaration.property] || 0) + 1;
 		}
 	}, {rules: test?.rules});
