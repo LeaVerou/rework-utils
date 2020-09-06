@@ -6,13 +6,7 @@ import matches from "./matches.js";
 export default function countDeclarations(rules, test) {
 	let ret = 0;
 
-	walkDeclarations(rules, declaration => {
-		let {property, value} = declaration;
-
-		if (matches(property, test?.properties) && matches(value, test?.values)) {
-			ret++;
-		}
-	});
+	walkDeclarations(rules, declaration => ret++, test);
 
 	return ret;
 }
