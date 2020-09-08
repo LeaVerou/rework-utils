@@ -1,8 +1,13 @@
-// Count properties that pass a given test, in rules that pass a given test
-// Returns object of properties and counts. Use sumObject(ret) to get total count.
+/** @module */
+
 import matches from "./matches.js";
 import sortObject from "./sortObject.js"
 
+/**
+ * Count properties that pass a given test, in rules that pass a given test
+ * @see {@link module:walkDeclarations} for arguments
+ * @return {Object} Property names and declaration counts. Use `sumObject(ret)` to get total count.
+ */
 export default function countProperties(rules, test) {
 	let ret = {};
 

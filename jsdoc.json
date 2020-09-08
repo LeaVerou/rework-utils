@@ -1,0 +1,23 @@
+{
+    "plugins": [
+		"plugins/markdown"
+	],
+    "recurseDepth": 10,
+    "source": {
+		"include": "./src",
+        "includePattern": ".+\\.js$",
+        "excludePattern": "\ball\\.js$"
+    },
+	"opts": {
+		"destination": "./docs/"
+	},
+    "sourceType": "module",
+    "tags": {
+        "allowUnknownTags": true,
+        "dictionaries": ["jsdoc","closure"]
+    },
+    "templates": {
+        "cleverLinks": true,
+        "monospaceLinks": false
+    }
+}

@@ -1,14 +1,28 @@
-// Rework utility to recursively walk all declarations
+/** @module */
+
 import matches from "./matches.js";
 
+/**
+ * Recursively walk all declarations
+ * @param {Object|Array} rules - AST, array of rules, or single rule
+ * @param {Function} callback - Callback to be executed on each declaration. Arguments: (declaration, rule)
+ * @param {Object} [test] - Conditions that need to be satisfied for a declaration to be visited, all optional
+ * @param {string|RegExp|Function|Array} test.properties - Test for property names
+ * @param {string|RegExp|Function|Array} test.values - Test for values
+ * @param {string|RegExp|Function|Array} test.rules - Test for rules
+ */
 export default function walkDeclarations(rules, callback, test) {
 	if (!rules) {
 		return;
 	}
 
-	if (!Array.isArray(rules)) {
+	if (rules.stylesheet) {
 		// AST passed
 		rules = rules.stylesheet.rules;
+	}
+	else if (!Array.isArray(rules)) {
+		// Single rule
+		rules = [rules];
 	}
 
 	for (let rule of rules) {
