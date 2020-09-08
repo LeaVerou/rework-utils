@@ -44,7 +44,9 @@ textarea {
 <body>
 <h1>Rework Utils</h1>
 <p>To try out, enter CSS below or a URL to a stylesheet, then play around in the console with the <code>AST</code> or <code>ast</code> variables (which is also displayed below).
-All util functions are imported into the global scope so you can play around with them too. <a href="docs">API Docs</a></p>
+All util functions, as well as <a href="../parsel">parsel</a>, are imported into the global scope so you can play around with them too. 
+<a href="docs">API Docs</a></p>
+
 <form id="cssForm" action="">
 	<fieldset>
 		<legend>Stylesheet</legend>
@@ -65,10 +67,13 @@ All util functions are imported into the global scope so you can play around wit
 <script src="https://cdn.httparchive.org/lib/parse-css.js"></script>
 <script type="module">
 import * as ReworkUtils from "./src/all.js";
+import * as parsel from "../parsel/parsel.js"
 
 for (let name in ReworkUtils) {
 	window[name] = ReworkUtils[name];
 }
+
+window.parsel = parsel;
 
 (async () => {
 
