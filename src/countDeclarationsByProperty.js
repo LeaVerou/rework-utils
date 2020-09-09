@@ -8,7 +8,7 @@ import sortObject from "./sortObject.js"
  * @see {@link module:walkDeclarations} for arguments
  * @return {Object} Property names and declaration counts. Use `sumObject(ret)` to get total count.
  */
-export default function countProperties(rules, test) {
+export default function countDeclarationsByProperty(rules, test) {
 	let ret = {};
 
 	walkDeclarations(rules, declaration => {
