@@ -3,7 +3,7 @@
 import countDeclarations from "./countDeclarations.js";
 export {countDeclarations};
 
-import countProperties from "./countDeclarationsByProperty.js";
+import countDeclarationsByProperty from "./countDeclarationsByProperty.js";
 export {countDeclarationsByProperty};
 
 import matches from "./matches.js";
