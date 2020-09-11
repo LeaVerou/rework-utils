@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: matches</title>
+    <title>JSDoc: Module: incrementByKey</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: matches</h1>
+    <h1 class="page-title">Module: incrementByKey</h1>
 
     
 
@@ -45,7 +45,7 @@
     
 
     
-    <h4 class="name" id="module:matches"><span class="type-signature"></span>(require("matches"))<span class="signature">(value, test<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
+    <h4 class="name" id="module:incrementByKey"><span class="type-signature"></span>(require("incrementByKey"))<span class="signature">(obj, key)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -53,9 +53,7 @@
 
 
 <div class="description">
-    <p>Test whether a value passes a given test.
-The test could be a string, regexp, function, or array of any of these.
-This is at the core of most walkers.</p>
+    <p>Increment a value in an object, whether the key exists or not</p>
 </div>
 
 
@@ -79,8 +77,6 @@ This is at the core of most walkers.</p>
         <th>Type</th>
 
         
-        <th>Attributes</th>
-        
 
         
 
@@ -93,68 +89,46 @@ This is at the core of most walkers.</p>
 
         <tr>
             
-                <td class="name"><code>value</code></td>
+                <td class="name"><code>obj</code></td>
             
 
             <td class="type">
             
+                
+<span class="param-type">Object</span>
+
+
+            
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>The object</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>test</code></td>
+                <td class="name"><code>key</code></td>
             
 
             <td class="type">
             
                 
 <span class="param-type">string</span>
-|
-
-<span class="param-type">RegExp</span>
-|
-
-<span class="param-type">function</span>
-|
-
-<span class="param-type">Array</span>
 
 
             
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>The object property</p></td>
         </tr>
 
     
@@ -195,7 +169,7 @@ This is at the core of most walkers.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="matches.js.html">matches.js</a>, <a href="matches.js.html#line10">line 10</a>
+        <a href="incrementByKey.js.html">incrementByKey.js</a>, <a href="incrementByKey.js.html#line9">line 9</a>
     </li></ul></dd>
     
 
@@ -224,7 +198,7 @@ This is at the core of most walkers.</p>
 
         
 <div class="param-desc">
-    <p>true if no test is provided, or test passes, false otherwise.</p>
+    <p>The new value</p>
 </div>
 
 
@@ -235,7 +209,7 @@ This is at the core of most walkers.</p>
     </dt>
     <dd>
         
-<span class="param-type">Boolean</span>
+<span class="param-type">number</span>
 
 
     </dd>

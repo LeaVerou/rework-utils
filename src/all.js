@@ -23,3 +23,6 @@ export {walkRules};
 
 import extractFunctionCalls from "./extractFunctionCalls.js";
 export {extractFunctionCalls};
+
+import incrementByKey from "./incrementByKey.js";
+export {incrementByKey};
