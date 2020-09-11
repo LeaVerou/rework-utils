@@ -108,7 +108,11 @@ async function update() {
 }
 
 update();
-cssCode.oninput = cssForm.onsubmit = cssURL.onchange = update;
+cssCode.oninput = cssURL.onchange = update;
+cssForm.onsubmit = evt => {
+	evt.preventDefault();
+	update();
+}
 
 cssCode.addEventListener("input", evt => {
 	let lines = cssCode.value.split("\n").length || 0;
