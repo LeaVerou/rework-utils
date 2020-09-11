@@ -20,3 +20,6 @@ export {walkDeclarations};
 
 import walkRules from "./walkRules.js";
 export {walkRules};
+
+import extractFunctionCalls from "./extractFunctionCalls.js";
+export {extractFunctionCalls};
