@@ -35,6 +35,7 @@ import matches from "./matches.js";
  * @param callback {Function} Function to be executed for each matching rule. Rule passed as the only argument.
  * @param [test] {Object}
  * @param test.rules {string|RegExp|Function|Array} Which rules the callback runs on
+ * @param test.type {string|RegExp|Function|Array} Which rule types the walker runs on
  * @param test.ancestors {string|RegExp|Function|Array} Which rules the walker descends on
  * @return The return value of the callback (which also breaks the loop) or undefined.
  */
@@ -49,7 +50,7 @@ export default function walkRules(rules, callback, test) {
 	}
 
 	for (let rule of rules) {
-		if (matches(rule, test?.rules)) {
+		if (matches(rule, test?.rules) &amp;&amp; matches(rule.type, test?.type)) {
 			let ret = callback(rule);
 
 			if (ret !== undefined) {
