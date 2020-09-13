@@ -5,5 +5,9 @@
  * @param {Function} [f=x=>x] Optional function to pass arguments through, useful if e.g. we are sorting by a property of an object.
  */
 export default function sortObject(obj, f = x => x) {
+	if (!obj) {
+		return obj;
+	}
+	
 	return Object.fromEntries(Object.entries(obj).sort((a, b) => f(b[1]) - f(a[1])));
 }
