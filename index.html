@@ -81,6 +81,11 @@ window.parsel = parsel;
 
 window.AST = undefined;
 
+let url = new URL(location)?.searchParams?.get("url");
+if (url) {
+	cssURL.value = url;
+}
+
 async function update() {
 	if (cssCode.value) {
 		try {
