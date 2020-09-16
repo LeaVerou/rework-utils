@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: walkRules.js</title>
+    <title>JSDoc: Source: walkSelectors.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: walkRules.js</h1>
+    <h1 class="page-title">Source: walkSelectors.js</h1>
 
     
 
@@ -27,44 +27,36 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/** @module */
+
 import matches from "./matches.js";
 
 /**
- * Recursively walk all "normal" rules, i.e. rules with selectors
- * @param rules {Object|Array} AST or array of CSS rules
- * @param callback {Function} Function to be executed for each matching rule. Rule passed as the only argument.
- * @param [test] {Object}
- * @param test.rules {string|RegExp|Function|Array} Which rules the callback runs on
- * @param test.type {string|RegExp|Function|Array} Which rule types the walker runs on
- * @param test.ancestors {string|RegExp|Function|Array} Which rules the walker descends on
- * @return The return value of the callback (which also breaks the loop) or undefined.
+ * Walk all selectors in rules that have selectors
+ * @param {Object|Array} rules - AST, array of rules, or single rule
+ * @param {Function} callback - Function to be executed for each matching rule. Rule passed as the only argument.
+ * @param {Object} [test]
+ * @param {string|RegExp|Function|Array} test.selectors - Which selectors the callback runs on
+ * @see {@link module:walkRules} for test properties available that filter the rules inspected
  */
-export default function walkRules(rules, callback, test) {
-	if (!rules) {
-		return;
-	}
-
-	if (!Array.isArray(rules)) {
+export default function walkSelectors(rules, callback, test) {
+	if (rules.stylesheet) {
 		// AST passed
 		rules = rules.stylesheet.rules;
 	}
-
-	for (let rule of rules) {
-		if (matches(rule, test &amp;&amp; test.rules) &amp;&amp; matches(rule.type, test &amp;&amp; test.type)) {
-			let ret = callback(rule);
-
-			if (ret !== undefined) {
-				// Break loop and return immediately
-				return ret;
-			}
-		}
-
-		if (matches(rule, test &amp;&amp; test.ancestors)) {
-			if (rule.rules) {
-				walkRules(rule.rules, callback, test);
-			}
-		}
+	else if (!Array.isArray(rules)) {
+		// Single rule
+		rules = [rules];
 	}
+
+	walkRules(rules, rule => {
+		if (rule.selectors) {
+			for (let selector of rule.selectors) {
+				if (matches(selector, test &amp;&amp; test.selectors)) {
+					callback(selector, rule.selectors);
+				}
+			}
+		}
+	}, test);
 }
 </code></pre>
         </article>

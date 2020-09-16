@@ -26,3 +26,6 @@ export {extractFunctionCalls};
 
 import incrementByKey from "./incrementByKey.js";
 export {incrementByKey};
+
+import walkSelectors from "./walkSelectors.js";
+export {walkSelectors};

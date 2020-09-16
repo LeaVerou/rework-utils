@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: matches</title>
+    <title>JSDoc: Module: walkSelectors</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: matches</h1>
+    <h1 class="page-title">Module: walkSelectors</h1>
 
     
 
@@ -45,7 +45,7 @@
     
 
     
-    <h4 class="name" id="module:matches"><span class="type-signature"></span>(require("matches"))<span class="signature">(value, test<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
+    <h4 class="name" id="module:walkSelectors"><span class="type-signature"></span>(require("walkSelectors"))<span class="signature">(rules, callback, test<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -53,9 +53,7 @@
 
 
 <div class="description">
-    <p>Test whether a value passes a given test.
-The test could be a string, regexp, function, or array of any of these.
-This is at the core of most walkers.</p>
+    <p>Walk all selectors in rules that have selectors</p>
 </div>
 
 
@@ -93,10 +91,18 @@ This is at the core of most walkers.</p>
 
         <tr>
             
-                <td class="name"><code>value</code></td>
+                <td class="name"><code>rules</code></td>
             
 
             <td class="type">
+            
+                
+<span class="param-type">Object</span>
+|
+
+<span class="param-type">Array</span>
+
+
             
             </td>
 
@@ -112,7 +118,38 @@ This is at the core of most walkers.</p>
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>AST, array of rules, or single rule</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Function to be executed for each matching rule. Rule passed as the only argument.</p></td>
         </tr>
 
     
@@ -120,6 +157,58 @@ This is at the core of most walkers.</p>
         <tr>
             
                 <td class="name"><code>test</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>selectors</code></td>
             
 
             <td class="type">
@@ -141,20 +230,17 @@ This is at the core of most walkers.</p>
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>Which selectors the callback runs on</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -195,53 +281,38 @@ This is at the core of most walkers.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="matches.js.html">matches.js</a>, <a href="matches.js.html#line10">line 10</a>
+        <a href="walkSelectors.js.html">walkSelectors.js</a>, <a href="walkSelectors.js.html#line13">line 13</a>
     </li></ul></dd>
     
 
     
 
     
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>true if no test is provided, or test passes, false otherwise.</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Boolean</span>
-
-
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="module-walkRules.html"><code>module:walkRules</code></a> for test properties available that filter the rules inspected</li>
+        </ul>
     </dd>
-</dl>
+    
 
     
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
