@@ -22,7 +22,7 @@ export default function walkRules(rules, callback, test) {
 	}
 
 	for (let rule of rules) {
-		if (matches(rule, test?.rules) && matches(rule.type, test?.type)) {
+		if (matches(rule, test && test.rules) && matches(rule.type, test && test.type)) {
 			let ret = callback(rule);
 
 			if (ret !== undefined) {
@@ -31,7 +31,7 @@ export default function walkRules(rules, callback, test) {
 			}
 		}
 
-		if (matches(rule, test?.ancestors)) {
+		if (matches(rule, test && test.ancestors)) {
 			if (rule.rules) {
 				walkRules(rule.rules, callback, test);
 			}

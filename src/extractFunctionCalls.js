@@ -27,7 +27,7 @@ export default function extractFunctionCalls(value, test) {
 
 	if (test) {
 		ret = ret.filter(f => {
-			return matches(f.name, test?.names) && matches(f.args, test?.args);
+			return matches(f.name, test && test.names) && matches(f.args, test && test.args);
 		});
 	}
 

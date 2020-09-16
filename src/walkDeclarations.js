@@ -26,14 +26,14 @@ export default function walkDeclarations(rules, callback, test) {
 	}
 
 	for (let rule of rules) {
-		if (!matches(rule, test?.rules)) {
+		if (!matches(rule, test && test.rules)) {
 			continue;
 		}
 
 		// Walk declarations directly in rule
 		if (rule.declarations) {
 			for (let declaration of rule.declarations) {
-				if (matches(declaration.property, test?.properties) && matches(declaration.value, test?.values)) {
+				if (matches(declaration.property, test && test.properties) && matches(declaration.value, test && test.values)) {
 					callback(declaration, rule);
 				}
 			}

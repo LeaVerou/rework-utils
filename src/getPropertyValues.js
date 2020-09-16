@@ -7,11 +7,11 @@ export default function getPropertyValues(rules, test) {
 	let ret = {};
 
 	walkDeclarations(rules, declaration => {
-		if (matches(declaration.property, test?.properties) && matches(declaration.value, test?.values)) {
+		if (matches(declaration.property, test && test.properties) && matches(declaration.value, test && test.values)) {
 			ret[declaration.property] = (ret[declaration.property] || new Set());
 			ret[declaration.property].add(declaration.value);
 		}
-	}, {rules: test?.rules});
+	}, {rules: test && test.rules});
 
 	return sortObject(ret);
 }
