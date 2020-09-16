@@ -7,9 +7,9 @@
  * @param {string|RegExp|Function|Array} [test]
  * @return {Boolean} true if no test is provided, or test passes, false otherwise.
  */
-export default function matches(value, test) {
+export default function matches(value, test, not) {
 	if (!test) {
-		return true;
+		return !not;
 	}
 
 	if (Array.isArray(test)) {

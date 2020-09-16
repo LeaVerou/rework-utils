@@ -26,14 +26,18 @@ export default function walkDeclarations(rules, callback, test) {
 	}
 
 	for (let rule of rules) {
-		if (!matches(rule, test && test.rules)) {
+		if (!matches(rule, test && test.rules) || matches(rule, test && test.not && test.not.rules, true)) {
 			continue;
 		}
 
 		// Walk declarations directly in rule
 		if (rule.declarations) {
 			for (let declaration of rule.declarations) {
-				if (matches(declaration.property, test && test.properties) && matches(declaration.value, test && test.values)) {
+				if (matches(declaration.property, test && test.properties)
+				    && matches(declaration.value, test && test.values)
+				    && !matches(declaration.property, test && test.not && test.not.properties, true)
+				    && !matches(declaration.value, test && test.not && test.not.values, true)
+				) {
 					callback(declaration, rule);
 				}
 			}
