@@ -33,12 +33,21 @@ export default function walkDeclarations(rules, callback, test) {
 		// Walk declarations directly in rule
 		if (rule.declarations) {
 			for (let declaration of rule.declarations) {
-				if (matches(declaration.property, test && test.properties)
+				if (declaration.type === "declaration"
+				    && matches(declaration.property, test && test.properties)
 				    && matches(declaration.value, test && test.values)
 				    && !matches(declaration.property, test && test.not && test.not.properties, true)
 				    && !matches(declaration.value, test && test.not && test.not.values, true)
 				) {
-					callback(declaration, rule);
+					let {property, value} = declaration;
+					let important = false;
+
+					value = value.replace(/\s*!important\s*$/, $0 => {
+						important = true;
+						return "";
+					});
+
+					callback({property, value, important}, rule);
 				}
 			}
 		}
