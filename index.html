@@ -67,13 +67,9 @@ All util functions, as well as <a href="../parsel">parsel</a>, are imported into
 <pre id="astDisplay"></pre>
 
 <script src="https://cdn.httparchive.org/lib/parse-css.js"></script>
+<script src="../rework-utils/rework-utils.js"></script>
 <script type="module">
-import * as ReworkUtils from "./src/all.js";
 import * as parsel from "../parsel/parsel.js"
-
-for (let name in ReworkUtils) {
-	window[name] = ReworkUtils[name];
-}
 
 window.parsel = parsel;
 
