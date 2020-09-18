@@ -4,5 +4,5 @@
  * @param {Object} obj
  */
 export default function sumObject(obj) {
-	Object.values(obj).reduce((a, c) => a + c, 0);
+	return Object.values(obj).reduce((a, c) => a + c, 0);
 }

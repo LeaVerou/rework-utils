@@ -28,6 +28,7 @@ let code = [];
 let imports = new Set();
 
 fs.readdir("./src", async (err, files) => {
+	files = files.sort(); // for stability
 	let done = await Promise.all(files.map(async file => {
 		let data = await readFile("./src/" + file);
 		data = data.replace("/** @module */", `/* ${file} */`)

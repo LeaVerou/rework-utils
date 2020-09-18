@@ -1,3 +1,55 @@
+/* extractFunctionCalls.js */
+/**
+ * Extract all or some function calls from a string
+ * @param {string} value - The value to extract function calls from.
+ *                         Note that this will also extract nested function calls, you can use `pos` to discard those if they are not of interest.
+ * @param {Object} [test]
+ * @param {string|RegExp|Function|Array} test.names
+ * @param {string|RegExp|Function|Array} test.args
+ * @return {Array<Object>} Array of objects, one for each function call with `{name, args, pos}` keys
+ */
+function extractFunctionCalls(value, test) {
+	// First, extract all function calls
+	let ret = [];
+
+	for (let match of value.matchAll(/\b(?<name>[\w-]+)\(/gi)) {
+		let index = match.index;
+		let openParen = index + match[0].length;
+		let rawArgs = parsel.gobbleParens(value, openParen - 1);
+		let args = rawArgs.slice(1, -1).trim();
+		let name = match.groups.name;
+
+		ret.push({name, pos: [index, index + match[0].length + rawArgs.length - 1], args})
+	}
+
+	if (test) {
+		ret = ret.filter(f => {
+			return matches(f.name, test && test.names) && matches(f.args, test && test.args);
+		});
+	}
+
+	return ret;
+}
+
+
+/* countDeclarationsByProperty.js */
+
+/**
+ * Count properties that pass a given test, in rules that pass a given test
+ * @see {@link module:walkDeclarations} for arguments
+ * @return {Object} Property names and declaration counts. Use `sumObject(ret)` to get total count.
+ */
+function countDeclarationsByProperty(rules, test) {
+	let ret = {};
+
+	walkDeclarations(rules, declaration => {
+		ret[declaration.property] = (ret[declaration.property] || 0) + 1;
+	}, test);
+
+	return sortObject(ret);
+}
+
+
 // Get distinct values of properties that pass a given test, in rules that pass a given test
 // Returns object of properties with arrays of values.
 function getPropertyValues(rules, test) {
@@ -14,16 +66,29 @@ function getPropertyValues(rules, test) {
 }
 
 
-/* incrementByKey.js */
+/* countDeclarations.js */
 
 /**
- * Increment a value in an object, whether the key exists or not
- * @param {Object} obj - The object
- * @param {string} key - The object property
- * @return {number} The new value
+ * Count total declarations that pass a given test.
+ * @see {@link module:walkDeclarations} for arguments
+ * @returns {number} Declaration count that pass the provided conditions.
  */
-function incrementByKey(obj, key) {
-	return obj[key] = (obj[key] || 0) + 1;
+function countDeclarations(rules, test) {
+	let ret = 0;
+
+	walkDeclarations(rules, declaration => ret++, test);
+
+	return ret;
+}
+
+
+/* sumObject.js */
+/**
+ * Sum all values of an object and return the result
+ * @param {Object} obj
+ */
+function sumObject(obj) {
+	return Object.values(obj).reduce((a, c) => a + c, 0);
 }
 
 
@@ -61,16 +126,6 @@ function matches(value, test, not) {
 }
 
 
-/* sumObject.js */
-/**
- * Sum all values of an object and return the result
- * @param {Object} obj
- */
-function sumObject(obj) {
-	Object.values(obj).reduce((a, c) => a + c, 0);
-}
-
-
 /* sortObject.js */
 /**
  * Sort an object literal and return the result as a new object literal
@@ -83,6 +138,59 @@ function sortObject(obj, f = x => x) {
 	}
 	
 	return Object.fromEntries(Object.entries(obj).sort((a, b) => f(b[1]) - f(a[1])));
+}
+
+
+/* walkRules.js */
+/**
+ * Recursively walk all "normal" rules, i.e. rules with selectors
+ * @param rules {Object|Array} AST or array of CSS rules
+ * @param callback {Function} Function to be executed for each matching rule. Rule passed as the only argument.
+ * @param [test] {Object}
+ * @param test.rules {string|RegExp|Function|Array} Which rules the callback runs on
+ * @param test.type {string|RegExp|Function|Array} Which rule types the walker runs on
+ * @param test.ancestors {string|RegExp|Function|Array} Which rules the walker descends on
+ * @return The return value of the callback (which also breaks the loop) or undefined.
+ */
+function walkRules(rules, callback, test) {
+	if (!rules) {
+		return;
+	}
+
+	if (!Array.isArray(rules)) {
+		// AST passed
+		rules = rules.stylesheet.rules;
+	}
+
+	for (let rule of rules) {
+		if (matches(rule, test && test.rules) && matches(rule.type, test && test.type)) {
+			let ret = callback(rule);
+
+			if (ret !== undefined) {
+				// Break loop and return immediately
+				return ret;
+			}
+		}
+
+		if (matches(rule, test && test.ancestors)) {
+			if (rule.rules) {
+				walkRules(rule.rules, callback, test);
+			}
+		}
+	}
+}
+
+
+/* incrementByKey.js */
+
+/**
+ * Increment a value in an object, whether the key exists or not
+ * @param {Object} obj - The object
+ * @param {string} key - The object property
+ * @return {number} The new value
+ */
+function incrementByKey(obj, key) {
+	return obj[key] = (obj[key] || 0) + 1;
 }
 
 
@@ -179,112 +287,4 @@ function walkSelectors(rules, callback, test) {
 			}
 		}
 	}, test);
-}
-
-
-/* walkRules.js */
-/**
- * Recursively walk all "normal" rules, i.e. rules with selectors
- * @param rules {Object|Array} AST or array of CSS rules
- * @param callback {Function} Function to be executed for each matching rule. Rule passed as the only argument.
- * @param [test] {Object}
- * @param test.rules {string|RegExp|Function|Array} Which rules the callback runs on
- * @param test.type {string|RegExp|Function|Array} Which rule types the walker runs on
- * @param test.ancestors {string|RegExp|Function|Array} Which rules the walker descends on
- * @return The return value of the callback (which also breaks the loop) or undefined.
- */
-function walkRules(rules, callback, test) {
-	if (!rules) {
-		return;
-	}
-
-	if (!Array.isArray(rules)) {
-		// AST passed
-		rules = rules.stylesheet.rules;
-	}
-
-	for (let rule of rules) {
-		if (matches(rule, test && test.rules) && matches(rule.type, test && test.type)) {
-			let ret = callback(rule);
-
-			if (ret !== undefined) {
-				// Break loop and return immediately
-				return ret;
-			}
-		}
-
-		if (matches(rule, test && test.ancestors)) {
-			if (rule.rules) {
-				walkRules(rule.rules, callback, test);
-			}
-		}
-	}
-}
-
-
-/* countDeclarations.js */
-
-/**
- * Count total declarations that pass a given test.
- * @see {@link module:walkDeclarations} for arguments
- * @returns {number} Declaration count that pass the provided conditions.
- */
-function countDeclarations(rules, test) {
-	let ret = 0;
-
-	walkDeclarations(rules, declaration => ret++, test);
-
-	return ret;
-}
-
-
-/* extractFunctionCalls.js */
-/**
- * Extract all or some function calls from a string
- * @param {string} value - The value to extract function calls from.
- *                         Note that this will also extract nested function calls, you can use `pos` to discard those if they are not of interest.
- * @param {Object} [test]
- * @param {string|RegExp|Function|Array} test.names
- * @param {string|RegExp|Function|Array} test.args
- * @return {Array<Object>} Array of objects, one for each function call with `{name, args, pos}` keys
- */
-function extractFunctionCalls(value, test) {
-	// First, extract all function calls
-	let ret = [];
-
-	for (let match of value.matchAll(/\b(?<name>[\w-]+)\(/gi)) {
-		let index = match.index;
-		let openParen = index + match[0].length;
-		let rawArgs = parsel.gobbleParens(value, openParen - 1);
-		let args = rawArgs.slice(1, -1).trim();
-		let name = match.groups.name;
-
-		ret.push({name, pos: [index, index + match[0].length + rawArgs.length - 1], args})
-	}
-
-	if (test) {
-		ret = ret.filter(f => {
-			return matches(f.name, test && test.names) && matches(f.args, test && test.args);
-		});
-	}
-
-	return ret;
-}
-
-
-/* countDeclarationsByProperty.js */
-
-/**
- * Count properties that pass a given test, in rules that pass a given test
- * @see {@link module:walkDeclarations} for arguments
- * @return {Object} Property names and declaration counts. Use `sumObject(ret)` to get total count.
- */
-function countDeclarationsByProperty(rules, test) {
-	let ret = {};
-
-	walkDeclarations(rules, declaration => {
-		ret[declaration.property] = (ret[declaration.property] || 0) + 1;
-	}, test);
-
-	return sortObject(ret);
 }
