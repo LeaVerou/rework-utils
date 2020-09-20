@@ -64,74 +64,48 @@ All util functions, as well as <a href="../parsel">parsel</a>, are imported into
 	</fieldset>
 </form>
 
-<pre id="astDisplay"></pre>
+<simple-tabs>
+	<simple-tab label="AST">
+		<pre id="astDisplay"></pre>
+	</simple-tab>
+	<simple-tab label="CSS">
+		<pre id="cssCodeDisplay"></pre>
+	</simple-tab>
+	<simple-tab label="Query">
+		<select id="selectQuery">
+			<option value="03-custom-prop-animation">Custom property animation #3</option>
+			<option value="04-paint">paint() #4</option>
+			<option value="05-specificity">Specificity #5</option>
+			<option value="08-sizing-model">Sizing model #8</option>
+			<option value="09-prefixes">Prefixes #9</option>
+			<option value="10-shorthands">Shorthands vs longhands #10</option>
+			<option value="11-lengths">Lengths #11</option>
+			<option value="14-layout-methods">Layout methods #14</option>
+			<option value="19-supports">@supports #19</option>
+			<option value="20-gradients">Gradients #20</option>
+			<option value="21-transitions-animations">Transitions & Animations #21</option>
+			<option value="27-specificity-hacks">Specificity Hacks #27</option>
+			<option value="29-nonexistent">Nonexistent properties #29</option>
+			<option value="30-mq-features">Media Query features #30</option>
+			<option value="31-selector-parts">Selector parts #31</option>
+			<option value="32-colors">Colors #32</option>
+			<option value="33-grid-template-areas">grid-template-areas #33</option>
+			<option value="34-named-grid-lines">Named grid lines #34</option>
+			<option value="35-gridlike-flexbox">Gridlike flexbox #35</option>
+			<option value="36-multicol">Multiple column layout #36</option>
+			<option value="43-logical">Logical properties & values #43</option>
+			<option value="45-mq-properties">Media Query Properties #45</option>
+			<option value="48-important">!important #48</option>
+			<option value="49-global">Global keywords #49</option>
+		</select>
+		<button id="queryRerun">Re-run</button>
+		<pre id="queryResults"></pre>
+	</simple-tab>
+</simple-tabs>
 
 <script src="https://cdn.httparchive.org/lib/parse-css.js"></script>
+<script src="simple-tabs.js"></script>
 <script src="../rework-utils/rework-utils.js"></script>
-<script type="module">
-import * as parsel from "../parsel/parsel.js"
-
-window.parsel = parsel;
-
-if (localStorage.cssCode) {
-	cssCode.value = localStorage.cssCode;
-}
-
-(async () => {
-
-window.AST = undefined;
-
-let url = new URL(location)?.searchParams?.get("url");
-if (url) {
-	cssURL.value = url;
-}
-
-async function update() {
-	if (cssCode.value) {
-		try {
-			AST = parse(cssCode.value);
-			cssCode.setCustomValidity("");
-		}
-		catch (e) {
-			cssCode.setCustomValidity(e.message);
-		}
-	}
-	else if (cssURL.value) {
-		let response = await fetch('https://cors-anywhere.herokuapp.com/' + cssURL.value);
-		let css = await response.text();
-		try {
-			AST = parse(css);
-		}
-		catch (e) {
-			console.error(e);
-		}
-	}
-
-	window.ast = AST;
-
-	astDisplay.textContent = JSON.stringify(AST, null, "\t");
-}
-
-update();
-cssCode.oninput = cssURL.onchange = update;
-cssForm.onsubmit = evt => {
-	evt.preventDefault();
-	update();
-}
-
-cssCode.addEventListener("input", evt => {
-	let lines = cssCode.value.split("\n").length || 0;
-	cssCode.style.setProperty("--lines", lines);
-	localStorage.cssCode = cssCode.value;
-});
-
-window.testQuery = async function(name) {
-	let filename = name.indexOf(".js") > -1? name : name + ".js?" + Date.now();
-	let module = await import("../css-almanac/js/" + filename);
-	console.log(module.default());
-}
-
-})();
-</script>
+<script type="module" src="playground.js"></script>
 </body>
 </html>
