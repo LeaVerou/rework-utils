@@ -1,3 +1,36 @@
+const css = `
+:host {
+	display: block;
+	font: inherit;
+	color: inherit;
+}
+
+::slotted(simple-tab) {
+	display: none;
+}
+
+::slotted(simple-tab[selected]) {
+	display: block;
+}
+
+.tab-bar {
+	display: flex;
+	gap: .1em;
+}
+
+.tab-bar > button {
+	font: inherit;
+	border: none;
+	border-bottom: .2em solid transparent;
+	background: none;
+	cursor: pointer;
+}
+
+.tab-bar > button.selected {
+	font-weight: bold;
+	border-bottom-color: var(--accent-color, hsl(220, 10%, 50%));
+}`;
+
 class SimpleTab extends HTMLElement {
 	constructor() {
 		super();
@@ -13,6 +46,7 @@ class SimpleTab extends HTMLElement {
 		}
 
 		this.tab = document.createElement("button");
+		this.tab.setAttribute("part", "tab");
 		this.tab.textContent = this.label;
 		this.tab.accessibleNode.role = "tab";
 		this.tab.addEventListener("click", e => {
@@ -43,6 +77,8 @@ class SimpleTab extends HTMLElement {
 			this.setAttribute("selected", "");
 			this.accessibleNode.selected = true;
 			this.tab.classList.add("selected");
+			let evt = new CustomEvent("tabselect");
+			this.dispatchEvent(evt);
 		}
 		else {
 			this.removeAttribute("selected");
@@ -106,39 +142,7 @@ class SimpleTabs extends HTMLElement {
 		this.bar.accessibleNode.role = "tablist";
 
 		let style = document.createElement("style");
-		style.textContent = `
-:host {
-	display: block;
-	font: inherit;
-	color: inherit;
-}
-
-::slotted(simple-tab) {
-	display: none;
-}
-
-::slotted(simple-tab[selected]) {
-	display: block;
-}
-
-.tab-bar {
-	display: flex;
-	gap: .1em;
-}
-
-.tab-bar > button {
-	font: inherit;
-	border: none;
-	border-bottom: .2em solid transparent;
-	background: none;
-	cursor: pointer;
-}
-
-.tab-bar > button.selected {
-	font-weight: bold;
-	border-bottom-color: var(--accent-color, hsl(220, 10%, 50%));
-}
-`;
+		style.textContent = css;
 
 		shadowRoot.append(style, this.bar, document.createElement("slot"));
 	}

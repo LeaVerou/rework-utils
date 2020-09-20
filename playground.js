@@ -68,6 +68,8 @@ queryRerun.onclick = async e => {
 	queryResults.textContent = JSON.stringify(result, null, "\t");
 }
 
+queryTab.addEventListener("tabselect", queryRerun.onclick);
+
 window.testQuery = async function(name) {
 	let filename = name.indexOf(".js") > -1? name : name + ".js?" + Date.now();
 	let module = await import("../css-almanac/js/" + filename);
