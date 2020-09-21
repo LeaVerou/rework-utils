@@ -24,6 +24,7 @@ pre {
 
 pre {
 	overflow: auto;
+	tab-size: 4;
 }
 
 input:invalid,
@@ -33,4 +34,8 @@ textarea:invalid {
 
 textarea {
 	min-height: calc(var(--lines, 1) * 1.5em);
+}
+
+simple-tabs {
+	margin-top: .5em;
 }
