@@ -1,5 +1,4 @@
 import * as parsel from "../parsel/parsel.js"
-import "./apriori.js";
 
 window.parsel = parsel;
 
@@ -7,7 +6,13 @@ if (localStorage.cssCode) {
 	cssCode.value = localStorage.cssCode;
 }
 
-(async () => {
+if (localStorage.selectQuery) {
+	selectQuery.value = localStorage.selectQuery;
+}
+
+if (localStorage.selectedTab) {
+	document.querySelector(`simple-tab[label="${localStorage.selectedTab}"]`)?.select();
+}
 
 window.AST = undefined;
 
@@ -37,8 +42,27 @@ async function update() {
 		cssCodeDisplay.textContent = cssCode.value;
 	}
 	else if (cssURL.value) {
-		let response = await fetch('https://cors-anywhere.herokuapp.com/' + cssURL.value);
-		let css = await response.text();
+		let url = cssURL.value;
+		let response = await fetch('https://cors-anywhere.herokuapp.com/' + url);
+		let css;
+		let mime = response.headers.get("Content-Type");
+
+		if (url.endsWith(".css") || mime.startsWith("text/css")) {
+			css = await response.text();
+		}
+		else {
+			// URL to a website
+			let html = await response.text();
+			let doc = new DOMParser().parseFromString(html, "text/html");
+			css = await Promise.all([...doc.querySelectorAll("link[rel=stylesheet]")]
+				.map(async l => {
+					let href = new URL(l.getAttribute("href"), url);
+					let res = await fetch('https://cors-anywhere.herokuapp.com/' + href);
+					return await res.text();
+				}));
+			css = css.join("\n")
+		}
+
 		cssCodeDisplay.textContent = css;
 		try {
 			AST = parse(css);
@@ -59,6 +83,13 @@ async function update() {
 
 update();
 cssCode.oninput = cssURL.onchange = update;
+
+cssURL.oninput = e => {
+	let url = new URL(location);
+	url.searchParams.set("url", cssURL.value);
+	history.replaceState(null, "", url);
+}
+
 cssForm.onsubmit = evt => {
 	evt.preventDefault();
 	update();
@@ -90,13 +121,3 @@ selectQuery.onchange = e => {
 tabs.addEventListener("tabselect", e => {
 	localStorage.selectedTab = e.target.label;
 });
-
-if (localStorage.selectQuery) {
-	selectQuery.value = localStorage.selectQuery;
-}
-
-if (localStorage.selectedTab) {
-	document.querySelector(`simple-tab[label="${localStorage.selectedTab}"]`)?.select();
-}
-
-})();
