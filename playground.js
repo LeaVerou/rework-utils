@@ -1,4 +1,5 @@
 import * as parsel from "../parsel/parsel.js"
+import "./apriori.js";
 
 window.parsel = parsel;
 
@@ -63,6 +64,9 @@ cssCode.addEventListener("input", evt => {
 
 selectQuery.onchange =
 queryRerun.onclick = async e => {
+	if (!window.AST) {
+		return;
+	}
 	let query = selectQuery.selectedOptions[0].value;
 	let result = await testQuery(query);
 	queryResults.textContent = JSON.stringify(result, null, "\t");
@@ -76,6 +80,14 @@ window.testQuery = async function(name) {
 	let ret = module.default();
 	console.log(ret);
 	return ret;
+}
+
+tabs.addEventListener("tabselect", e => {
+	localStorage.selectedTab = e.target.label;
+});
+
+if (localStorage.selectedTab) {
+	document.querySelector(`simple-tab[label="${localStorage.selectedTab}"]`)?.select();
 }
 
 })();

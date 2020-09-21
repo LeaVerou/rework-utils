@@ -77,7 +77,7 @@ class SimpleTab extends HTMLElement {
 			this.setAttribute("selected", "");
 			this.accessibleNode.selected = true;
 			this.tab.classList.add("selected");
-			let evt = new CustomEvent("tabselect");
+			let evt = new CustomEvent("tabselect", {bubbles: true});
 			this.dispatchEvent(evt);
 		}
 		else {
