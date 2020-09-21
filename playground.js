@@ -11,6 +11,14 @@ if (localStorage.cssCode) {
 
 window.AST = undefined;
 
+window.testQuery = async function(name) {
+	let filename = name.indexOf(".js") > -1? name : name + ".js?" + Date.now();
+	let module = await import("../css-almanac/js/" + filename);
+	let ret = module.default();
+	console.log(ret);
+	return ret;
+}
+
 let url = new URL(location)?.searchParams?.get("url");
 if (url) {
 	cssURL.value = url;
@@ -62,29 +70,30 @@ cssCode.addEventListener("input", evt => {
 	localStorage.cssCode = cssCode.value;
 });
 
-selectQuery.onchange =
 queryRerun.onclick = async e => {
 	if (!window.AST) {
 		return;
 	}
-	let query = selectQuery.selectedOptions[0].value;
+
+	let query = selectQuery.value;
 	let result = await testQuery(query);
 	queryResults.textContent = JSON.stringify(result, null, "\t");
 }
 
 queryTab.addEventListener("tabselect", queryRerun.onclick);
 
-window.testQuery = async function(name) {
-	let filename = name.indexOf(".js") > -1? name : name + ".js?" + Date.now();
-	let module = await import("../css-almanac/js/" + filename);
-	let ret = module.default();
-	console.log(ret);
-	return ret;
-}
+selectQuery.onchange = e => {
+	localStorage.selectQuery = selectQuery.value;
+	queryRerun.onclick();
+};
 
 tabs.addEventListener("tabselect", e => {
 	localStorage.selectedTab = e.target.label;
 });
+
+if (localStorage.selectQuery) {
+	selectQuery.value = localStorage.selectQuery;
+}
 
 if (localStorage.selectedTab) {
 	document.querySelector(`simple-tab[label="${localStorage.selectedTab}"]`)?.select();
