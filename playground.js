@@ -29,6 +29,16 @@ if (url) {
 	cssURL.value = url;
 }
 
+queryRerun.onclick = async e => {
+	if (!window.AST) {
+		return;
+	}
+
+	let query = selectQuery.value;
+	let result = await testQuery(query);
+	queryResults.textContent = JSON.stringify(result, null, "\t");
+}
+
 async function update() {
 	if (cssCode.value) {
 		try {
@@ -43,6 +53,7 @@ async function update() {
 	}
 	else if (cssURL.value) {
 		let url = cssURL.value;
+		cssURL.classList.add("loading");
 		let response = await fetch('https://cors-anywhere.herokuapp.com/' + url);
 		let css;
 		let mime = response.headers.get("Content-Type");
@@ -63,7 +74,9 @@ async function update() {
 			css = css.join("\n")
 		}
 
+		cssURL.classList.remove("loading");
 		cssCodeDisplay.textContent = css;
+
 		try {
 			AST = parse(css);
 		}
@@ -101,15 +114,7 @@ cssCode.addEventListener("input", evt => {
 	localStorage.cssCode = cssCode.value;
 });
 
-queryRerun.onclick = async e => {
-	if (!window.AST) {
-		return;
-	}
 
-	let query = selectQuery.value;
-	let result = await testQuery(query);
-	queryResults.textContent = JSON.stringify(result, null, "\t");
-}
 
 queryTab.addEventListener("tabselect", queryRerun.onclick);
 
