@@ -46,7 +46,7 @@ export default function walkDeclarations(rules, callback, test) {
 				});
 
 				if (!test ||
-					    matches(property, test.properties)
+				        matches(property, test.properties)
 				    &&  matches(value, test.values)
 				    && !matches(property, test.not && test.not.properties, true)
 				    && !matches(value, test.not && test.not.values, true)

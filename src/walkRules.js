@@ -22,7 +22,12 @@ export default function walkRules(rules, callback, test) {
 	}
 
 	for (let rule of rules) {
-		if (matches(rule, test && test.rules) && matches(rule.type, test && test.type)) {
+		if (!test ||
+		        matches(rule, test && test.rules)
+		    &&  matches(rule.type, test && test.type)
+		    && !matches(rule, test.not && test.not.rules, true)
+		    && !matches(rule.type, test.not && test.not.type, true)
+		) {
 			let ret = callback(rule);
 
 			if (ret !== undefined) {
@@ -31,7 +36,10 @@ export default function walkRules(rules, callback, test) {
 			}
 		}
 
-		if (matches(rule, test && test.ancestors)) {
+		if (
+		        matches(rule, test && test.ancestors)
+		    && !matches(rule, test && test.not && test.not.ancestors, true)
+		) {
 			if (rule.rules) {
 				walkRules(rule.rules, callback, test);
 			}
