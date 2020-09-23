@@ -1,37 +1,3 @@
-/* extractFunctionCalls.js */
-/**
- * Extract all or some function calls from a string
- * @param {string} value - The value to extract function calls from.
- *                         Note that this will also extract nested function calls, you can use `pos` to discard those if they are not of interest.
- * @param {Object} [test]
- * @param {string|RegExp|Function|Array} test.names
- * @param {string|RegExp|Function|Array} test.args
- * @return {Array<Object>} Array of objects, one for each function call with `{name, args, pos}` keys
- */
-function extractFunctionCalls(value, test) {
-	// First, extract all function calls
-	let ret = [];
-
-	for (let match of value.matchAll(/\b(?<name>[\w-]+)\(/gi)) {
-		let index = match.index;
-		let openParen = index + match[0].length;
-		let rawArgs = parsel.gobbleParens(value, openParen - 1);
-		let args = rawArgs.slice(1, -1).trim();
-		let name = match.groups.name;
-
-		ret.push({name, pos: [index, index + match[0].length + rawArgs.length - 1], args})
-	}
-
-	if (test) {
-		ret = ret.filter(f => {
-			return matches(f.name, test && test.names) && matches(f.args, test && test.args);
-		});
-	}
-
-	return ret;
-}
-
-
 /* countDeclarationsByProperty.js */
 
 /**
@@ -66,118 +32,37 @@ function getPropertyValues(rules, test) {
 }
 
 
-/* countDeclarations.js */
-
+/* extractFunctionCalls.js */
 /**
- * Count total declarations that pass a given test.
- * @see {@link module:walkDeclarations} for arguments
- * @returns {number} Declaration count that pass the provided conditions.
+ * Extract all or some function calls from a string
+ * @param {string} value - The value to extract function calls from.
+ *                         Note that this will also extract nested function calls, you can use `pos` to discard those if they are not of interest.
+ * @param {Object} [test]
+ * @param {string|RegExp|Function|Array} test.names
+ * @param {string|RegExp|Function|Array} test.args
+ * @return {Array<Object>} Array of objects, one for each function call with `{name, args, pos}` keys
  */
-function countDeclarations(rules, test) {
-	let ret = 0;
+function extractFunctionCalls(value, test) {
+	// First, extract all function calls
+	let ret = [];
 
-	walkDeclarations(rules, declaration => ret++, test);
+	for (let match of value.matchAll(/\b(?<name>[\w-]+)\(/gi)) {
+		let index = match.index;
+		let openParen = index + match[0].length;
+		let rawArgs = parsel.gobbleParens(value, openParen - 1);
+		let args = rawArgs.slice(1, -1).trim();
+		let name = match.groups.name;
+
+		ret.push({name, pos: [index, index + match[0].length + rawArgs.length - 1], args})
+	}
+
+	if (test) {
+		ret = ret.filter(f => {
+			return matches(f.name, test && test.names) && matches(f.args, test && test.args);
+		});
+	}
 
 	return ret;
-}
-
-
-/* sumObject.js */
-/**
- * Sum all values of an object and return the result
- * @param {Object} obj
- */
-function sumObject(obj) {
-	return Object.values(obj).reduce((a, c) => a + c, 0);
-}
-
-
-/* matches.js */
-/**
- * Test whether a value passes a given test.
- * The test could be a string, regexp, function, or array of any of these.
- * This is at the core of most walkers.
- * @param value
- * @param {string|RegExp|Function|Array} [test]
- * @return {Boolean} true if no test is provided, or test passes, false otherwise.
- */
-function matches(value, test, not) {
-	if (!test) {
-		return !not;
-	}
-
-	if (Array.isArray(test)) {
-		return test.some(t => matches(value, t));
-	}
-
-	let type = typeof test;
-
-	if (type === "string") {
-		return value === test;
-	}
-	else if (type === "function") {
-		return test(value);
-	}
-	else if (test instanceof RegExp) {
-		return test.test(value);
-	}
-
-	return false;
-}
-
-
-/* sortObject.js */
-/**
- * Sort an object literal and return the result as a new object literal
- * @param {Object} obj
- * @param {Function} [f=x=>x] Optional function to pass arguments through, useful if e.g. we are sorting by a property of an object.
- */
-function sortObject(obj, f = x => x) {
-	if (!obj) {
-		return obj;
-	}
-	
-	return Object.fromEntries(Object.entries(obj).sort((a, b) => f(b[1]) - f(a[1])));
-}
-
-
-/* walkRules.js */
-/**
- * Recursively walk all "normal" rules, i.e. rules with selectors
- * @param rules {Object|Array} AST or array of CSS rules
- * @param callback {Function} Function to be executed for each matching rule. Rule passed as the only argument.
- * @param [test] {Object}
- * @param test.rules {string|RegExp|Function|Array} Which rules the callback runs on
- * @param test.type {string|RegExp|Function|Array} Which rule types the walker runs on
- * @param test.ancestors {string|RegExp|Function|Array} Which rules the walker descends on
- * @return The return value of the callback (which also breaks the loop) or undefined.
- */
-function walkRules(rules, callback, test) {
-	if (!rules) {
-		return;
-	}
-
-	if (!Array.isArray(rules)) {
-		// AST passed
-		rules = rules.stylesheet.rules;
-	}
-
-	for (let rule of rules) {
-		if (matches(rule, test && test.rules) && matches(rule.type, test && test.type)) {
-			let ret = callback(rule);
-
-			if (ret !== undefined) {
-				// Break loop and return immediately
-				return ret;
-			}
-		}
-
-		if (matches(rule, test && test.ancestors)) {
-			if (rule.rules) {
-				walkRules(rule.rules, callback, test);
-			}
-		}
-	}
 }
 
 
@@ -240,7 +125,7 @@ function walkDeclarations(rules, callback, test) {
 				});
 
 				if (!test ||
-					    matches(property, test.properties)
+				        matches(property, test.properties)
 				    &&  matches(value, test.values)
 				    && !matches(property, test.not && test.not.properties, true)
 				    && !matches(value, test.not && test.not.values, true)
@@ -255,6 +140,85 @@ function walkDeclarations(rules, callback, test) {
 			walkDeclarations(rule.rules, callback, test);
 		}
 	}
+}
+
+
+/* walkRules.js */
+/**
+ * Recursively walk all "normal" rules, i.e. rules with selectors
+ * @param rules {Object|Array} AST or array of CSS rules
+ * @param callback {Function} Function to be executed for each matching rule. Rule passed as the only argument.
+ * @param [test] {Object}
+ * @param test.rules {string|RegExp|Function|Array} Which rules the callback runs on
+ * @param test.type {string|RegExp|Function|Array} Which rule types the walker runs on
+ * @param test.ancestors {string|RegExp|Function|Array} Which rules the walker descends on
+ * @return The return value of the callback (which also breaks the loop) or undefined.
+ */
+function walkRules(rules, callback, test) {
+	if (!rules) {
+		return;
+	}
+
+	if (!Array.isArray(rules)) {
+		// AST passed
+		rules = rules.stylesheet.rules;
+	}
+
+	for (let rule of rules) {
+		if (!test ||
+		        matches(rule, test && test.rules)
+		    &&  matches(rule.type, test && test.type)
+		    && !matches(rule, test.not && test.not.rules, true)
+		    && !matches(rule.type, test.not && test.not.type, true)
+		) {
+			let ret = callback(rule);
+
+			if (ret !== undefined) {
+				// Break loop and return immediately
+				return ret;
+			}
+		}
+
+		if (
+		        matches(rule, test && test.ancestors)
+		    && !matches(rule, test && test.not && test.not.ancestors, true)
+		) {
+			if (rule.rules) {
+				walkRules(rule.rules, callback, test);
+			}
+		}
+	}
+}
+
+
+/* countDeclarations.js */
+
+/**
+ * Count total declarations that pass a given test.
+ * @see {@link module:walkDeclarations} for arguments
+ * @returns {number} Declaration count that pass the provided conditions.
+ */
+function countDeclarations(rules, test) {
+	let ret = 0;
+
+	walkDeclarations(rules, declaration => ret++, test);
+
+	return ret;
+}
+
+
+/* sortObject.js */
+/**
+ * Sort an object literal and return the result as a new object literal
+ * @param {Object} obj
+ * @param {Function} [f=x=>x] Optional function to pass arguments through, useful if e.g. we are sorting by a property of an object.
+ */
+function sortObject(obj, f = x => x) {
+	if (!obj) {
+		return obj;
+	}
+	
+	return Object.fromEntries(Object.entries(obj).sort((a, b) => f(b[1]) - f(a[1])));
 }
 
 
@@ -287,4 +251,48 @@ function walkSelectors(rules, callback, test) {
 			}
 		}
 	}, test);
+}
+
+
+/* sumObject.js */
+/**
+ * Sum all values of an object and return the result
+ * @param {Object} obj
+ */
+function sumObject(obj) {
+	return Object.values(obj).reduce((a, c) => a + c, 0);
+}
+
+
+/* matches.js */
+/**
+ * Test whether a value passes a given test.
+ * The test could be a string, regexp, function, or array of any of these.
+ * This is at the core of most walkers.
+ * @param value
+ * @param {string|RegExp|Function|Array} [test]
+ * @return {Boolean} true if no test is provided, or test passes, false otherwise.
+ */
+function matches(value, test, not) {
+	if (!test) {
+		return !not;
+	}
+
+	if (Array.isArray(test)) {
+		return test.some(t => matches(value, t));
+	}
+
+	let type = typeof test;
+
+	if (type === "string") {
+		return value === test;
+	}
+	else if (type === "function") {
+		return test(value);
+	}
+	else if (test instanceof RegExp) {
+		return test.test(value);
+	}
+
+	return false;
 }
