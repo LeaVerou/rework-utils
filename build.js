@@ -24,12 +24,14 @@ function writeFile(file, contents, enc) {
 	});
 }
 
-let code = [];
-let imports = new Set();
+
+
 
 fs.readdir("./src", async (err, files) => {
+	let imports = new Set();
 	files = files.sort(); // for stability
-	let done = await Promise.all(files.map(async file => {
+
+	let code = await Promise.all(files.map(async file => {
 		let data = await readFile("./src/" + file);
 		data = data.replace("/** @module */", `/* ${file} */`)
 
@@ -45,7 +47,7 @@ fs.readdir("./src", async (err, files) => {
 			return "";
 		});
 
-		code.push(data);
+		return data;
 	}));
 
 	// Create combined ESM
