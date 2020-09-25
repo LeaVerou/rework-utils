@@ -54,7 +54,16 @@ async function update() {
 	else if (cssURL.value) {
 		let url = cssURL.value;
 		cssURL.classList.add("loading");
-		let response = await fetch('https://cors-anywhere.herokuapp.com/' + url);
+		let response;
+
+		try {
+			response = await fetch('https://cors-anywhere.herokuapp.com/' + url);
+		}
+		catch (e) {
+			cssURL.classList.remove("loading");
+			return;
+		}
+		
 		let css;
 		let mime = response.headers.get("Content-Type");
 
