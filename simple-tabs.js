@@ -35,8 +35,9 @@ class SimpleTab extends HTMLElement {
 	constructor() {
 		super();
 
-		if (this.accessibleNode) {
-			this.accessibleNode.role = "tabpanel";
+		if (this.attachInternals) {
+			this._internals = this.attachInternals();
+			this._internals.role = "tabpanel";
 		}
 	}
 
@@ -48,7 +49,8 @@ class SimpleTab extends HTMLElement {
 		this.tab = document.createElement("button");
 		this.tab.setAttribute("part", "tab");
 		this.tab.textContent = this.label;
-		this.tab.accessibleNode.role = "tab";
+		this.tab.role = "tab";
+
 		this.tab.addEventListener("click", e => {
 			if (!this.selected) {
 				this.select();
@@ -75,15 +77,17 @@ class SimpleTab extends HTMLElement {
 	set selected(value) {
 		if (value) {
 			this.setAttribute("selected", "");
-			this.accessibleNode.selected = true;
 			this.tab.classList.add("selected");
 			let evt = new CustomEvent("tabselect", {bubbles: true});
 			this.dispatchEvent(evt);
 		}
 		else {
 			this.removeAttribute("selected");
-			this.accessibleNode.selected = false;
 			this.tab.classList.remove("selected");
+		}
+
+		if (this._internals) {
+			this._internals.ariaSelected = !!value;
 		}
 	}
 
@@ -138,8 +142,8 @@ class SimpleTabs extends HTMLElement {
 		let shadowRoot = this.attachShadow({mode: "open"});
 
 		this.bar = document.createElement("div");
-		this.bar.className = "tab-bar"
-		this.bar.accessibleNode.role = "tablist";
+		this.bar.className = "tab-bar";
+		this.bar.role = "tablist";
 
 		let style = document.createElement("style");
 		style.textContent = css;
