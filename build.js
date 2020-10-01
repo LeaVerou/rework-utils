@@ -24,9 +24,6 @@ function writeFile(file, contents, enc) {
 	});
 }
 
-
-
-
 fs.readdir("./src", async (err, files) => {
 	let imports = new Set();
 	files = files.sort(); // for stability
