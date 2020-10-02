@@ -1,7 +1,17 @@
 import * as parsel from "../parsel/parsel.js"
 
 window.parsel = parsel;
+window.AST = undefined;
 
+window.testQuery = async function(name) {
+	let filename = name.indexOf(".js") > -1? name : name + ".js?" + Date.now();
+	let module = await import("../css-almanac/js/" + filename);
+	let ret = module.default();
+	console.log(ret);
+	return ret;
+}
+
+// Get previously entered CSS code
 if (localStorage.cssCode) {
 	cssCode.value = localStorage.cssCode;
 }
@@ -14,20 +24,13 @@ if (localStorage.selectedTab) {
 	document.querySelector(`simple-tab[label="${localStorage.selectedTab}"]`)?.select();
 }
 
-window.AST = undefined;
-
-window.testQuery = async function(name) {
-	let filename = name.indexOf(".js") > -1? name : name + ".js?" + Date.now();
-	let module = await import("../css-almanac/js/" + filename);
-	let ret = module.default();
-	console.log(ret);
-	return ret;
-}
-
+// Get URL field from the URL, if it exists
 let url = new URL(location)?.searchParams?.get("url");
 if (url) {
 	cssURL.value = url;
 }
+
+cssForm.elements.cssInput.value = cssCode.value? "text" : "url";
 
 queryRerun.onclick = async e => {
 	if (!window.AST) {
@@ -40,7 +43,11 @@ queryRerun.onclick = async e => {
 }
 
 async function update() {
-	if (cssCode.value) {
+	let css;
+
+	if (cssForm.elements.cssInput.value === "text") {
+		css = cssCodeDisplay.textContent = cssCode.value;
+
 		try {
 			AST = parse(cssCode.value);
 			cssCode.setCustomValidity("");
@@ -48,10 +55,8 @@ async function update() {
 		catch (e) {
 			cssCode.setCustomValidity(e.message);
 		}
-
-		cssCodeDisplay.textContent = cssCode.value;
 	}
-	else if (cssURL.value) {
+	else if (cssForm.elements.cssInput.value === "url" && cssURL.value) {
 		let url = cssURL.value;
 		cssURL.classList.add("loading");
 		let response;
@@ -63,11 +68,10 @@ async function update() {
 			cssURL.classList.remove("loading");
 			return;
 		}
-		
-		let css;
+
 		let mime = response.headers.get("Content-Type");
 
-		if (url.endsWith(".css") || mime.startsWith("text/css")) {
+		if (url.endsWith(".css") || mime?.startsWith("text/css")) {
 			css = await response.text();
 		}
 		else {
@@ -84,23 +88,29 @@ async function update() {
 		}
 
 		cssURL.classList.remove("loading");
-		cssCodeDisplay.textContent = css;
+	}
 
-		try {
-			AST = parse(css);
-		}
-		catch (e) {
-			console.error(e);
-		}
+	cssCodeDisplay.textContent = css;
+
+	try {
+		AST = parse(css);
+		astDisplay.classList.remove("error");
+		astDisplay.textContent = JSON.stringify(AST, null, "\t");
+	}
+	catch (e) {
+		astDisplay.classList.add("error");
+		astDisplay.innerHTML = `<details><summary>${e}</summary>${e.stack.replace(e, "")}</details>`;
 	}
 
 	window.ast = AST;
 
-	astDisplay.textContent = JSON.stringify(AST, null, "\t");
-
 	if (document.querySelector('simple-tab[label="Query"][selected]')) {
 		queryRerun.onclick();
 	}
+}
+
+for (let radio of cssForm.elements.cssInput) {
+	radio.onclick = update;
 }
 
 update();
@@ -110,7 +120,12 @@ cssURL.oninput = e => {
 	let url = new URL(location);
 	url.searchParams.set("url", cssURL.value);
 	history.replaceState(null, "", url);
+	cssForm.elements.cssInput.value = "url";
 }
+
+cssCode.addEventListener("input", evt => {
+	cssForm.elements.cssInput.value = "text";
+})
 
 cssForm.onsubmit = evt => {
 	evt.preventDefault();
