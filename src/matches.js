@@ -25,7 +25,9 @@ export default function matches(value, test, not) {
 		return test(value);
 	}
 	else if (test instanceof RegExp) {
-		return test.test(value);
+		let ret = test.test(value);
+		test.lastIndex = 0;
+		return ret;
 	}
 
 	return false;
