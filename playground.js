@@ -105,7 +105,7 @@ async function update() {
 	window.ast = AST;
 
 	if (document.querySelector('simple-tab[label="Query"][selected]')) {
-		queryRerun.onclick();
+		selectQuery.onchange();
 	}
 }
 
@@ -113,7 +113,6 @@ for (let radio of cssForm.elements.cssInput) {
 	radio.onclick = update;
 }
 
-update();
 cssCode.oninput = cssURL.onchange = update;
 
 cssURL.oninput = e => {
@@ -144,9 +143,13 @@ queryTab.addEventListener("tabselect", queryRerun.onclick);
 
 selectQuery.onchange = e => {
 	localStorage.selectQuery = selectQuery.value;
+	let issue = parseFloat(selectQuery.value.substring(0, 2));
+	readMore.href = "https://github.com/LeaVerou/css-almanac/issues/" + issue;
 	queryRerun.onclick();
 };
 
 tabs.addEventListener("tabselect", e => {
 	localStorage.selectedTab = e.target.label;
 });
+
+update();
