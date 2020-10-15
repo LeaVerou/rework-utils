@@ -78,8 +78,12 @@ async function update() {
 			// URL to a website
 			let html = await response.text();
 			let doc = new DOMParser().parseFromString(html, "text/html");
-			css = await Promise.all([...doc.querySelectorAll("link[rel=stylesheet]")]
+			css = await Promise.all([...doc.querySelectorAll("link[rel=stylesheet], style")]
 				.map(async l => {
+					if (l.nodeName === "STYLE") {
+						return l.textContent;
+					}
+
 					let href = new URL(l.getAttribute("href"), url);
 					let res = await fetch('https://cors-anywhere.herokuapp.com/' + href);
 					return await res.text();
