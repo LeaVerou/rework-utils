@@ -154,6 +154,32 @@ function matches(value, test, not) {
 }
 
 
+/* removeFunctionCalls.js */
+/**
+ * Remove function calls from a string
+ * @param {string} value - @see {@link module:extractFunctionCalls} for arguments
+ * @param {Object} [test] @see {@link module:extractFunctionCalls} for arguments.
+ *                        Except `topLevel` which is always true, as it doesn't make sense otherwise.
+ * @return {String} The string
+ */
+function removeFunctionCalls(value, test = {}) {
+	test.topLevel = true;
+	let offset = 0;
+
+	for (let f of extractFunctionCalls(value, test)) {
+		let [start, end] = f.pos;
+		console.log(start, end, offset);
+		start -= offset;
+		end -= offset;
+
+		value = value.substring(0, start) + value.substring(end);
+		offset += end - start;
+	}
+
+	return value;
+}
+
+
 /* sortObject.js */
 /**
  * Sort an object literal and return the result as a new object literal
