@@ -35,9 +35,9 @@
  * @param {string|RegExp|Function|Array} [test]
  * @return {Boolean} true if no test is provided, or test passes, false otherwise.
  */
-export default function matches(value, test) {
+export default function matches(value, test, not) {
 	if (!test) {
-		return true;
+		return !not;
 	}
 
 	if (Array.isArray(test)) {
@@ -53,7 +53,9 @@ export default function matches(value, test) {
 		return test(value);
 	}
 	else if (test instanceof RegExp) {
-		return test.test(value);
+		let ret = test.test(value);
+		test.lastIndex = 0;
+		return ret;
 	}
 
 	return false;
@@ -68,7 +70,7 @@ export default function matches(value, test) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-countDeclarations.html">countDeclarations</a></li><li><a href="module-countDeclarationsByProperty.html">countDeclarationsByProperty</a></li><li><a href="module-extractFunctionCalls.html">extractFunctionCalls</a></li><li><a href="module-incrementByKey.html">incrementByKey</a></li><li><a href="module-matches.html">matches</a></li><li><a href="module-sortObject.html">sortObject</a></li><li><a href="module-sumObject.html">sumObject</a></li><li><a href="module-walkDeclarations.html">walkDeclarations</a></li><li><a href="module-walkRules.html">walkRules</a></li><li><a href="module-walkSelectors.html">walkSelectors</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-countDeclarations.html">countDeclarations</a></li><li><a href="module-countDeclarationsByProperty.html">countDeclarationsByProperty</a></li><li><a href="module-extractFunctionCalls.html">extractFunctionCalls</a></li><li><a href="module-incrementByKey.html">incrementByKey</a></li><li><a href="module-matches.html">matches</a></li><li><a href="module-removeFunctionCalls.html">removeFunctionCalls</a></li><li><a href="module-sortObject.html">sortObject</a></li><li><a href="module-sumObject.html">sumObject</a></li><li><a href="module-walkDeclarations.html">walkDeclarations</a></li><li><a href="module-walkRules.html">walkRules</a></li><li><a href="module-walkSelectors.html">walkSelectors</a></li></ul>
 </nav>
 
 <br class="clear">

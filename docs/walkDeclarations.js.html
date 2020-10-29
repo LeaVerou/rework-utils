@@ -54,15 +54,32 @@ export default function walkDeclarations(rules, callback, test) {
 	}
 
 	for (let rule of rules) {
-		if (!matches(rule, test &amp;&amp; test.rules)) {
+		if (!matches(rule, test &amp;&amp; test.rules) || matches(rule, test &amp;&amp; test.not &amp;&amp; test.not.rules, true)) {
 			continue;
 		}
 
 		// Walk declarations directly in rule
 		if (rule.declarations) {
 			for (let declaration of rule.declarations) {
-				if (matches(declaration.property, test &amp;&amp; test.properties) &amp;&amp; matches(declaration.value, test &amp;&amp; test.values)) {
-					callback(declaration, rule);
+				if (declaration.type !== "declaration") {
+					continue;
+				}
+
+				let {property, value} = declaration;
+				let important = false;
+
+				value = value.replace(/\s*!important\s*$/, $0 => {
+					important = true;
+					return "";
+				});
+
+				if (!test ||
+				        matches(property, test.properties)
+				    &amp;&amp;  matches(value, test.values)
+				    &amp;&amp; !matches(property, test.not &amp;&amp; test.not.properties, true)
+				    &amp;&amp; !matches(value, test.not &amp;&amp; test.not.values, true)
+				) {
+					callback({property, value, important}, rule);
 				}
 			}
 		}
@@ -83,7 +100,7 @@ export default function walkDeclarations(rules, callback, test) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-countDeclarations.html">countDeclarations</a></li><li><a href="module-countDeclarationsByProperty.html">countDeclarationsByProperty</a></li><li><a href="module-extractFunctionCalls.html">extractFunctionCalls</a></li><li><a href="module-incrementByKey.html">incrementByKey</a></li><li><a href="module-matches.html">matches</a></li><li><a href="module-sortObject.html">sortObject</a></li><li><a href="module-sumObject.html">sumObject</a></li><li><a href="module-walkDeclarations.html">walkDeclarations</a></li><li><a href="module-walkRules.html">walkRules</a></li><li><a href="module-walkSelectors.html">walkSelectors</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-countDeclarations.html">countDeclarations</a></li><li><a href="module-countDeclarationsByProperty.html">countDeclarationsByProperty</a></li><li><a href="module-extractFunctionCalls.html">extractFunctionCalls</a></li><li><a href="module-incrementByKey.html">incrementByKey</a></li><li><a href="module-matches.html">matches</a></li><li><a href="module-removeFunctionCalls.html">removeFunctionCalls</a></li><li><a href="module-sortObject.html">sortObject</a></li><li><a href="module-sumObject.html">sumObject</a></li><li><a href="module-walkDeclarations.html">walkDeclarations</a></li><li><a href="module-walkRules.html">walkRules</a></li><li><a href="module-walkSelectors.html">walkSelectors</a></li></ul>
 </nav>
 
 <br class="clear">

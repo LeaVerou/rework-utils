@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: sumObject</title>
+    <title>JSDoc: Module: removeFunctionCalls</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: sumObject</h1>
+    <h1 class="page-title">Module: removeFunctionCalls</h1>
 
     
 
@@ -45,7 +45,7 @@
     
 
     
-    <h4 class="name" id="module:sumObject"><span class="type-signature"></span>(require("sumObject"))<span class="signature">(obj)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="module:removeFunctionCalls"><span class="type-signature"></span>(require("removeFunctionCalls"))<span class="signature">(value, test<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {String}</span></h4>
     
 
     
@@ -53,7 +53,7 @@
 
 
 <div class="description">
-    <p>Sum all values of an object and return the result</p>
+    <p>Remove function calls from a string</p>
 </div>
 
 
@@ -77,6 +77,8 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
         
 
@@ -89,7 +91,38 @@
 
         <tr>
             
-                <td class="name"><code>obj</code></td>
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>@see <a href="module-extractFunctionCalls.html"><code>module:extractFunctionCalls</code></a> for arguments</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>test</code></td>
             
 
             <td class="type">
@@ -102,10 +135,21 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>@see <a href="module-extractFunctionCalls.html"><code>module:extractFunctionCalls</code></a> for arguments.
+Except <code>topLevel</code> which is always true, as it doesn't make sense otherwise.</p></td>
         </tr>
 
     
@@ -146,7 +190,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sumObject.js.html">sumObject.js</a>, <a href="sumObject.js.html#line6">line 6</a>
+        <a href="removeFunctionCalls.js.html">removeFunctionCalls.js</a>, <a href="removeFunctionCalls.js.html#line11">line 11</a>
     </li></ul></dd>
     
 
@@ -171,6 +215,28 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The string</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">String</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: incrementByKey.js</title>
+    <title>JSDoc: Source: removeFunctionCalls.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: incrementByKey.js</h1>
+    <h1 class="page-title">Source: removeFunctionCalls.js</h1>
 
     
 
@@ -27,15 +27,30 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/** @module */
+import extractFunctionCalls from "./extractFunctionCalls.js";
 
 /**
- * Increment a value in an object, whether the key exists or not
- * @param {Object} obj - The object
- * @param {string} key - The object property
- * @return {number} The new value
+ * Remove function calls from a string
+ * @param {string} value - @see {@link module:extractFunctionCalls} for arguments
+ * @param {Object} [test] @see {@link module:extractFunctionCalls} for arguments.
+ *                        Except `topLevel` which is always true, as it doesn't make sense otherwise.
+ * @return {String} The string
  */
-export default function incrementByKey(obj, key) {
-	return obj[key] = (obj[key] || 0) + 1;
+export default function removeFunctionCalls(value, test = {}) {
+	test.topLevel = true;
+	let offset = 0;
+
+	for (let f of extractFunctionCalls(value, test)) {
+		let [start, end] = f.pos;
+		console.log(start, end, offset);
+		start -= offset;
+		end -= offset;
+
+		value = value.substring(0, start) + value.substring(end);
+		offset += end - start;
+	}
+
+	return value;
 }
 </code></pre>
         </article>
