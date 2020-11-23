@@ -14,7 +14,6 @@ export default function removeFunctionCalls(value, test = {}) {
 
 	for (let f of extractFunctionCalls(value, test)) {
 		let [start, end] = f.pos;
-		console.log(start, end, offset);
 		start -= offset;
 		end -= offset;
 
