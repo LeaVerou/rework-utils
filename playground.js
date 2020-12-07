@@ -114,9 +114,7 @@ async function update() {
 
 	window.ast = AST;
 
-	if (document.querySelector('simple-tab[label="Query"][selected]')) {
-		selectQuery.onchange();
-	}
+	selectQuery.onchange();
 }
 
 for (let radio of cssForm.elements.cssInput) {
@@ -146,10 +144,6 @@ cssCode.addEventListener("input", evt => {
 	cssCode.style.setProperty("--lines", lines);
 	localStorage.cssCode = cssCode.value;
 });
-
-
-
-queryTab.addEventListener("tabselect", queryRerun.onclick);
 
 selectQuery.onchange = e => {
 	localStorage.selectQuery = selectQuery.value;
