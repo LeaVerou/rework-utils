@@ -1,4 +1,10 @@
-import * as parsel from "../parsel/parsel.js"
+import * as parsel from "../parsel/parsel.js";
+
+const fetchOptions = {
+	headers: new Headers({
+		"X-Requested-With": "fetch"
+	})
+};
 
 window.parsel = parsel;
 window.AST = undefined;
@@ -62,7 +68,7 @@ async function update() {
 		let response;
 
 		try {
-			response = await fetch('https://cors-anywhere.herokuapp.com/' + url);
+			response = await fetch('https://cors-anywhere.herokuapp.com/' + url, fetchOptions);
 		}
 		catch (e) {
 			cssURL.classList.remove("loading");
@@ -85,7 +91,7 @@ async function update() {
 					}
 
 					let href = new URL(l.getAttribute("href"), url);
-					let res = await fetch('https://cors-anywhere.herokuapp.com/' + href);
+					let res = await fetch('https://cors-anywhere.herokuapp.com/' + href, fetchOptions);
 					return await res.text();
 				}));
 			css = css.join("\n")
