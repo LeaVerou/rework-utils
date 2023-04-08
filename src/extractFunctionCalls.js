@@ -1,5 +1,5 @@
 /** @module */
-import * as parsel from "../../parsel/parsel.js";
+import * as parsel from "https://parsel.verou.me/dist/parsel.js";
 import matches from "./matches.js";
 
 /**
