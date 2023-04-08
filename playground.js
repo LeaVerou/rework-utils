@@ -1,4 +1,4 @@
-import * as parsel from "../parsel/parsel.js";
+import * as parsel from "https://parsel.verou.me/dist/parsel.js";
 
 const fetchOptions = {
 	headers: new Headers({

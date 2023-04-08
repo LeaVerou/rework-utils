@@ -1,4 +1,4 @@
-import * as parsel from "../parsel/parsel.js";
+import * as parsel from "https://parsel.verou.me/dist/parsel.js";
 /* countDeclarations.js */
 
 /**
@@ -190,7 +190,7 @@ export function sortObject(obj, f = x => x) {
 	if (!obj) {
 		return obj;
 	}
-	
+
 	return Object.fromEntries(Object.entries(obj).sort((a, b) => f(b[1]) - f(a[1])));
 }
 
